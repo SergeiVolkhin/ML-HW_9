@@ -11,6 +11,7 @@ on:
     paths:
       - "infra/**"
       - ".github/workflows/iac.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -96,7 +97,9 @@ jobs:
 
   apply:
     name: terraform apply
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Manual-only: требует настроенный AWS OIDC trust + secret AWS_OIDC_ROLE_ARN.
+    # Запускается через Actions -> iac -> Run workflow, после ручного создания secrets.
+    if: github.event_name == 'workflow_dispatch'
     needs: validate
     runs-on: ubuntu-latest
     environment:
